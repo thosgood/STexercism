@@ -1,6 +1,6 @@
 # STexercism
 
-This is a Sublime Text 3 package that allows access to some of the exercism.io CLI commands.
+This is a Sublime Text 3 package that allows access to some of the `exercism.io` CLI commands (and so it requires that you already have the CLI installed).
 
 Currently supported (accessed through the command palette):
 - `STexercism: Submit current exercise file`. Must be run when focused on the file to be submitted.
