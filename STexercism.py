@@ -4,7 +4,7 @@ import subprocess
 import re
 
 
-class SubmitCurrentFileCommand(sublime_plugin.TextCommand):
+class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         try:
             submit_cli = subprocess.check_output(
@@ -26,7 +26,7 @@ class SubmitCurrentFileCommand(sublime_plugin.TextCommand):
 
 # TODO: make sure you get the right file? this would be very language dependent
 
-class OpenCurrentExerciseCommand(sublime_plugin.TextCommand):
+class StexercismOpenCurrentExerciseCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         match = re.search(
             r'exercism/\w*/([-\w]*)/',

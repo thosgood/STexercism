@@ -1,4 +1,4 @@
 [
-    {"caption": "STexercism: Submit current exercise file", "command": "submit_current_file"},
-    {"caption": "STexercism: Open current exercise on the website", "command": "open_current_exercise"}
+    {"caption": "STexercism: Submit current exercise file", "command": "stexercism_submit_current_file"},
+    {"caption": "STexercism: Open current exercise on the website", "command": "stexercism_open_current_exercise"}
 ]
