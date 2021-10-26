@@ -65,6 +65,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                         err.output.decode('UTF-8').strip())
                     + "\n\nMaybe you are checking the wrong file?")
 
+#TODO: Add more tracks, possibly make it a list on Sublime to not fill command list.
 
 def convert(text):
     str_list = text.strip().split()
