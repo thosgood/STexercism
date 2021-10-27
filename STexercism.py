@@ -3,7 +3,6 @@ import sublime_plugin
 import subprocess
 import re
 
-
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         try:
@@ -25,7 +24,6 @@ class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
                 + "\n\nMaybe you submitted the wrong file?")
 
 # TODO: make sure you get the right file? this would be very language dependent
-
 
 class StexercismOpenCurrentExerciseCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -67,14 +65,18 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
 
 #TODO: Add more tracks, possibly make it a list on Sublime to not fill command list.
 
-def convert(text):
-	s = ''.join(ch for ch in text if ch.isalnum() or ch == " ")
+def convert(text): #Converts the name of the exercise into usable names for cmd
+    s = ''.join(ch for ch in text if ch.isalnum() or ch == " ")
     str_list = s.strip().split()
     return "-".join(str_list).lower()
 
-def converttrack(text):
-	str_list = s.strip().split()
-    return "-".join(str_list).lower()
+def tracklist(): #draws list of all programming tracks from track_list.txt
+    track_list = []
+    track_file = open("track_list.txt")
+    for line in track_file:
+        track_name, track_code = line.replace("\n","").split(",")
+        track_list.append((track_name, track_code))
+    return track_list
 
 class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
     def name(self):
@@ -87,21 +89,22 @@ class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
         if 'trackname' not in args:
             return StexercismTrackNameInputHandler()
 
-class StexercismTrackNameInputHandler(sublime_plugin.TextInputHandler):
-    def name(self):
-        return "trackname"
+class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
+    def list_items(self):
+        track_list = tracklist()
+        return track_list
 
     def placeholder(self):
         return "Track Name"
 
 class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
-    def run(self, edit, exername, trackname): #unfinished
+    def run(self, edit, exername, stexercism_track_name): 
         try:
             submit_cli = subprocess.check_output(
                 ["exercism",
                 "download",
                 "--exercise=" + convert(exername),
-                "--track=" + converttrack(trackname)],
+                "--track=" + stexercism_track_name],
                 stderr=subprocess.STDOUT)
             sublime.active_window().run_command(
                 "show_panel",
@@ -117,5 +120,5 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     def input(self, args):
         if 'exername' not in args:
             return StexercismExerciseNameInputHandler()
-        elif 'trackname' not in args:
+        elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
