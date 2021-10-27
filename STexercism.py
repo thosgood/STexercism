@@ -53,7 +53,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
         
         except subprocess.CalledProcessError as err:
             
-            if err.returncode == 1: #This is an exception made for if there are failed tasks
+            if err.returncode == 1: #This is an exception only made if there are failed tasks, works fine otherwise
                 print(err.output.decode('UTF-8').strip())
                 pass
             else:
@@ -66,7 +66,8 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
 
 #TODO: Add more tracks, possibly make it a list on Sublime to not fill command list.
 
-def convert(text): #Converts the name of the exercise into usable names for cmd
+def convert(text): 
+    """Converts the name of the exercise into usable names for cmd"""
     s = ''.join(ch for ch in text if ch.isalnum() or ch == " ")
     str_list = s.strip().split()
     return "-".join(str_list).lower()
@@ -89,6 +90,8 @@ class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
     def placeholder(self):
         return "Track Name"
 
+#TODO: Have a settings option for if you want pytest.ini to auto create?
+#Can also include option for auto opening the file that you downloaded
 class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     def run(self, edit, exername, stexercism_track_name): 
         try:
@@ -102,6 +105,9 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
                 "show_panel",
                 {"panel": "console", "toggle": True})
             print(submit_cli.decode('UTF-8').strip())
+            #this next part is a placeholder to help add a pytest.ini file to whatever folder you made
+            if stexercism_track_name == 'python':
+                directory_name = submit_cli.decode('UTF-8').strip().split("\n")[-1]
         except subprocess.CalledProcessError as err:
             raise RuntimeError(
                 "command '{}' returned with error (code {}): {}.".format(
@@ -115,7 +121,8 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
 
-#TODO: Figure out how to make track_list a different file, or even possibly a way to auto-update from the website
+#TODO: Figure out how to make track_list a different file
+#or even possibly a way to auto-update from the website?
 track_list = [
     ('Bash', 'bash'),
     ('C', 'c'),
@@ -154,8 +161,8 @@ track_list = [
     ('PHP', 'php'),
     ('PL/SQL', 'plsql'),
     ('Prolog', 'prolog'),
-    ('Python', 'python'),
     ('PureScript', 'purescript'),
+    ('Python', 'python'),
     ('R', 'r'),
     ('Racket', 'racket'),
     ('Raku', 'raku'),
@@ -173,6 +180,5 @@ track_list = [
     ('Wren', 'wren'),
     ('x86-64 Assembly', 'x86-64-assembly')]
 
-#TODO: Add command to create pytest.ini in file's directory to prevent warnings
-#if possible make it work with Download (Read from console last line for dir maybe?)
-
+#TODO: Add command to create pytest.ini in file's directory to prevent warnings if the track is python
+#if possible make it work with Download (Can get last 
