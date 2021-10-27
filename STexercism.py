@@ -70,14 +70,6 @@ def convert(text): #Converts the name of the exercise into usable names for cmd
     str_list = s.strip().split()
     return "-".join(str_list).lower()
 
-def tracklist(): #draws list of all programming tracks from track_list.txt
-    track_list = []
-    track_file = open("track_list.txt")
-    for line in track_file:
-        track_name, track_code = line.replace("\n","").split(",")
-        track_list.append((track_name, track_code))
-    return track_list
-
 class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
     def name(self):
         return "exername"
@@ -91,7 +83,6 @@ class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
 
 class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
     def list_items(self):
-        track_list = tracklist()
         return track_list
 
     def placeholder(self):
@@ -122,3 +113,61 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             return StexercismExerciseNameInputHandler()
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
+
+
+track_list = [
+    ('Bash', 'bash'),
+    ('C', 'c'),
+    ('C#', 'csharp'),
+    ('C++', 'cpp'),
+    ('CFML', 'cfml'),
+    ('Clojure', 'clojure'),
+    ('ClojureScript', 'clojurescript'),
+    ('CoffeeScript', 'coffeescript'),
+    ('Common Lisp', 'common-lisp'),
+    ('Crystal', 'crystal'),
+    ('D', 'd'),
+    ('Dart', 'dart'),
+    ('Delphi Pascal', 'delphi'),
+    ('Elixir', 'elixir'),
+    ('Elm', 'elm'),
+    ('Emacs Lisp', 'emacs-lisp'),
+    ('Erlang', 'erlang'),
+    ('F#', 'fsharp'),
+    ('Fortran', 'fortran'),
+    ('Go', 'go'),
+    ('Groovy', 'groovy'),
+    ('Haskell', 'haskell'),
+    ('Java', 'java'),
+    ('Javascript', 'javascript'),
+    ('Julia', 'julia'),
+    ('Kotlin', 'kotlin'),
+    ('LFE', 'lfe'),
+    ('Lua', 'lua'),
+    ('MIPS Assembly', 'mips'),
+    ('Nim', 'nim'),
+    ('Objective-C', 'objctive-c'),
+    ('OCaml', ' ocaml'),
+    ('Perl 5', 'perl5'),
+    ('Pharo', 'pharo-smalltalk'),
+    ('PHP', 'php'),
+    ('PL/SQL', 'plsql'),
+    ('Prolog', 'prolog'),
+    ('Python', 'python'),
+    ('PureScript', 'purescript'),
+    ('R', 'r'),
+    ('Racket', 'racket'),
+    ('Raku', 'raku'),
+    ('ReasonML', 'reasonml'),
+    ('Ruby', 'ruby'),
+    ('Rust', 'rust'),
+    ('Scala', 'scala'),
+    ('Scheme', 'scheme'),
+    ('Standard ML', ' sml'),
+    ('Swift', 'swift'),
+    ('Tcl', 'tcl'),
+    ('Typescript', 'typescript'),
+    ('VB.NET', 'vbnet'),
+    ('Vim script', 'vimscript'),
+    ('Wren', 'wren'),
+    ('x86-64 Assembly', 'x86-64-assembly')]
