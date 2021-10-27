@@ -68,10 +68,13 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
 #TODO: Add more tracks, possibly make it a list on Sublime to not fill command list.
 
 def convert(text):
-    str_list = text.strip().split()
+	s = ''.join(ch for ch in text if ch.isalnum() or ch == " ")
+    str_list = s.strip().split()
     return "-".join(str_list).lower()
 
-#TODO: Remove anything that's not alphanumerical?
+def converttrack(text):
+	str_list = s.strip().split()
+    return "-".join(str_list).lower()
 
 class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
     def name(self):
@@ -98,7 +101,7 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
                 ["exercism",
                 "download",
                 "--exercise=" + convert(exername),
-                "--track=" + convert(trackname)],
+                "--track=" + converttrack(trackname)],
                 stderr=subprocess.STDOUT)
             sublime.active_window().run_command(
                 "show_panel",
