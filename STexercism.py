@@ -36,6 +36,7 @@ class StexercismOpenCurrentExerciseCommand(sublime_plugin.TextCommand):
                 "open",
                 match.group(1)])
 
+#TODO: add options for flags -x and -ff, prolly off a listinput
 class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         try:
@@ -114,7 +115,7 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
 
-
+#TODO: Figure out how to make track_list a different file, or even possibly a way to auto-update from the website
 track_list = [
     ('Bash', 'bash'),
     ('C', 'c'),
@@ -171,3 +172,7 @@ track_list = [
     ('Vim script', 'vimscript'),
     ('Wren', 'wren'),
     ('x86-64 Assembly', 'x86-64-assembly')]
+
+#TODO: Add command to create pytest.ini in file's directory to prevent warnings
+#if possible make it work with Download (Read from console last line for dir maybe?)
+
