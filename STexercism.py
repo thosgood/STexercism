@@ -158,6 +158,24 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
 #Possibly for python: get dir > do ls on dir > find the file with the correct type (.py) and doesn't have "_test"
 
 #MAINTENANCE PROGRAMS
+class StexercismMaintListInputHandler(sublime_plugin.ListInputHandler):
+    def list_items(self):
+        return sublime.load_settings(settings_filename).get("maint_command_list")
+
+class StexercismMaintenanceListCommand(sublime_plugin.TextCommand):
+    def run(self, edit, stexercism_maint_list):
+        try:
+            self.view.run_command(stexercism_maint_list)
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+                "command '{}' returned with error (code {}): {}.".format(
+                    err.cmd,
+                    err.returncode,
+                    err.output.decode('UTF-8').strip()))
+    def input(self, args):
+        if 'stexercism_maint_list' not in args:
+            return StexercismMaintListInputHandler()
+
 class StexercismVersionCheckCommand(sublime_plugin.TextCommand):
     """Checks version of CLI"""
     def run(self, edit):
@@ -196,7 +214,7 @@ class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
             print(submit_cli.decode('UTF-8').strip())
             path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
             
-            if sublime.load_settings(settings_filename).load_settings("toggle_open_path_workspace"):
+            if sublime.load_settings(settings_filename).get("toggle_open_path_workspace"):
                 #Checks what OS will work
                 if platform == "win32":
                     os.startfile(path)
@@ -216,6 +234,26 @@ class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
                     err.output.decode('UTF-8').strip()))
 
 #TOGGLES
+class StexercismTogglesListInputHandler(sublime_plugin.ListInputHandler):
+    def list_items(self):
+        return sublime.load_settings(settings_filename).get("toggle_command_list")
+
+class StexercismTogglesListCommand(sublime_plugin.TextCommand):
+    """Lists all toggle commands and runs them"""
+    def run(self, edit, stexercism_toggles_list):
+        try:
+            self.view.run_command(stexercism_toggles_list)
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+                "command '{}' returned with error (code {}): {}.".format(
+                    err.cmd,
+                    err.returncode,
+                    err.output.decode('UTF-8').strip()))
+    def input(self, args):
+        if 'toggle_command' not in args:
+            return StexercismTogglesListInputHandler()
+
+
 class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
     """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
     def run(self, edit):
@@ -246,6 +284,3 @@ class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
             sublime.save_settings(settings_filename)
             print("Current pytest.ini auto-create setting: " + str(exer_settings.get("toggle_open_path_workspace")))
 #NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
-
-#TODO: Condense the toggles into one program to save space
-#TODO: Condense Update/Workspace/Version into "Maintenance" command to save space
