@@ -102,8 +102,10 @@ class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
     def placeholder(self):
         return "Track Name"
 
-#TODO: Have a settings option for if you want pytest.ini to auto create?
-#Can also include option for auto opening the file that you downloaded (Just some couple variables for switches)
+
+#IDEA: Can also include option for auto opening the file that you downloaded
+#(Very track-specific and no consistent way to do so)
+#Possibly: get dir > do ls on dir > find the file with the correct ender (.py) and doesn't have "_test"
 class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     """Uses gathered input to download an exercise file"""
     def run(self, edit, exername, stexercism_track_name): 
@@ -119,9 +121,13 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
                 "show_panel",
                 {"panel": "console", "toggle": True})
             print(submit_cli.decode('UTF-8').strip())
-            #this next part is a placeholder to help add a pytest.ini file to whatever folder you made
+            #this part adds a pytest.ini file if you toggled the flag to be true in sublime-settings or through the command
             if stexercism_track_name == 'python' and exer_settings.get("pytest_ini_toggle"):
-                directory_name = submit_cli.decode('UTF-8').strip().split("\n")[-1]
+                directory_name = submit_cli.decode('UTF-8').strip().split("\n")[-1] + "\\pytest.ini"
+                f = open(directory_name, "w")
+                f.write("[pytest]\nmarkers =\n    task: A concept exercise task.")
+                f.close()
+                print("\npytest.ini file created at directory: " + directory_name)
         except subprocess.CalledProcessError as err:
             raise RuntimeError(
                 "command '{}' returned with error (code {}): {}.".format(
@@ -193,9 +199,21 @@ track_list = [
     ('Vim script', 'vimscript'),
     ('Wren', 'wren'),
     ('x86-64 Assembly', 'x86-64-assembly')]
+class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
+    """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
+    def run(self, edit):
+        exer_settings = sublime.load_settings(settings_filename)
+        try:
+            exer_settings.set(
+                "pytest_ini_toggle", 
+                not exer_settings.get("pytest_ini_toggle"))
+            sublime.save_settings(settings_filename)
+            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
+        except:
+            exer_settings.set("pytest_ini_toggle", False)
+            sublime.save_settings(settings_filename)
+            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
 
-#TODO: Add command to create pytest.ini in file's directory to prevent warnings if the track is python
-#if possible make it work with Download (get last line for dir and make new file)
 
 #TODO: Add command to create pytest.ini in file's directory to prevent warnings if the track is python
 #if possible make it work with Download (get last line for dir and make new file) (very difficult for multiple tracks)
