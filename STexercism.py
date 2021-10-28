@@ -4,6 +4,7 @@ import subprocess
 import re
 
 settings_filename = "STexercism.sublime-settings"
+
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     """submits the current file open on Sublime Text"""
     def run(self, edit):
@@ -24,21 +25,34 @@ class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
                     err.returncode,
                     err.output.decode('UTF-8').strip())
                 + "\n\nMaybe you submitted the wrong file?")
-
 # TODO: make sure you get the right file? this would be very language dependent
 
-#Idk if this open command doesn't work for me or for anyone else? I can try messing with this and get it to work
 class StexercismOpenCurrentExerciseCommand(sublime_plugin.TextCommand):
     """Opens the current exercise's website page"""
     def run(self, edit):
-        match = re.search(
-            r'exercism/\w*/([-\w]*)/',
-            self.view.file_name())
-        if match:
-            open_cli = subprocess.check_output([
-                "exercism",
-                "open",
-                match.group(1)])
+        try: 
+            match = re.search(
+                r'exercism\\\w*\\([-\w]*)\\',
+                self.view.file_name())
+            if match:
+                open_cli = subprocess.check_output([
+                    "exercism",
+                    "open",
+                    self.view.file_name()[:self.view.file_name().rfind("\\")]])
+            else:
+                raise RuntimeError(
+                    "This program isn't in the exercism folder." 
+                    + "\nMake sure the directory ends with"
+                    + "\n'exercism\\EXERISE_NAME\\FILE_NAME.TYPE'")
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+                "command '{}' returned with error (code {}): {}.".format(
+                    err.cmd,
+                    err.returncode,
+                    err.output.decode('UTF-8').strip())
+                + "\n\nIs the directory correct?\n"
+                + match.group(0)
+                + self.view.file_name())
 
 class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
     """(Python only) Tests the current file using pytest"""
@@ -61,7 +75,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                     err.cmd,
                     err.returncode,
                     err.output.decode('UTF-8').strip())
-                + "\n\nFlag list doesn't exist or is missing. Please check sublime-settings")
+                + "\n\nFlag list doesn't exist or is missing. Please check sublime-settings.")
 
         except subprocess.CalledProcessError as err:
             if err.returncode == 1: #This is an exception only made if there are failed tasks, works fine otherwise
@@ -73,8 +87,8 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                         err.returncode,
                         err.output.decode('UTF-8').strip())
                     + "\n\nMaybe you are checking the wrong file? Also check your flags in sublime-settings")
+#TODO_IDEA: Add more tracks, possibly make it a list on Sublime to not fill command list.
 
-#TODO: Add more tracks, possibly make it a list on Sublime to not fill command list.
 
 def convert(text): 
     """Converts the name of the exercise into usable names for cmd"""
@@ -103,9 +117,6 @@ class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
         return "Track Name"
 
 
-#IDEA: Can also include option for auto opening the file that you downloaded
-#(Very track-specific and no consistent way to do so)
-#Possibly: get dir > do ls on dir > find the file with the correct ender (.py) and doesn't have "_test"
 class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     """Uses gathered input to download an exercise file"""
     def run(self, edit, exername, stexercism_track_name): 
@@ -121,7 +132,7 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
                 "show_panel",
                 {"panel": "console", "toggle": True})
             print(submit_cli.decode('UTF-8').strip())
-            #this part adds a pytest.ini file if you toggled the flag to be true in sublime-settings or through the command
+            #This next part adds a pytest.ini file if you toggled the flag to be true in sublime-settings or through the command
             if stexercism_track_name == 'python' and exer_settings.get("pytest_ini_toggle"):
                 directory_name = submit_cli.decode('UTF-8').strip().split("\n")[-1] + "\\pytest.ini"
                 f = open(directory_name, "w")
@@ -140,6 +151,9 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             return StexercismExerciseNameInputHandler()
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
+#TODO_IDEA: Can also include option for auto opening the file that you downloaded?
+#(Very track-specific and no consistent way to do so)
+#Possibly: get dir > do ls on dir > find the file with the correct ender (.py) and doesn't have "_test"
 
 class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
     """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
@@ -155,7 +169,3 @@ class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
             exer_settings.set("pytest_ini_toggle", False)
             sublime.save_settings(settings_filename)
             print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
-
-
-#TODO: Add command to create pytest.ini in file's directory to prevent warnings if the track is python
-#if possible make it work with Download (get last line for dir and make new file) (very difficult for multiple tracks)
