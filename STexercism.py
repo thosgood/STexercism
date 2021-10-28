@@ -78,7 +78,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                 "show_panel",
                 {"panel": "console", "toggle": True})
             print(submit_cli.decode('UTF-8').strip())
-        except TypeError:
+        except TypeError as err:
             raise RuntimeError(
                 "command '{}' returned with error (code {}): {}.".format(
                     err.cmd,
@@ -90,13 +90,30 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
             if err.returncode == 1: #This is an exception only made if there are failed tasks, works fine otherwise
                 print(err.output.decode('UTF-8').strip())
             else:
-                raise RuntimeError(
-                    "command '{}' returned with error (code {}): {}.".format(
-                        err.cmd,
-                        err.returncode,
-                        err.output.decode('UTF-8').strip())
-                    + "\n\nMaybe you are checking the wrong file? Also check your flags in sublime-settings")
+                try:
+                    submit_cli = subprocess.check_output(
+                        ["python",
+                        "-m",
+                        "pytest",
+                        self.view.file_name()[:-3]+"_test.py"],
+                        stderr=subprocess.STDOUT)
+                    sublime.active_window().run_command(
+                        "show_panel",
+                        {"panel": "console", "toggle": True})
+                    print(submit_cli.decode('UTF-8').strip()
+                    + "\nWARNING: Invalid flags. Please check sublime-settings.\nTest has been run with no flags.")
+                except:
+                    raise RuntimeError(
+                        "command '{}' returned with error (code {}): {}.".format(
+                            err.cmd,
+                            err.returncode,
+                            err.output.decode('UTF-8').strip())
+                        + "\n\nMaybe you are checking the wrong file?")
 #TODO_IDEA: Add more tracks, possibly make it a list on Sublime to not fill command list.
+#TODO_DROPPED: Make toggle command that accepts user command to update flags list for test command.
+#Already have a failsafe in case the flags are invalid so should be fine
+#REASON: Unable to put into the List of Toggles command + overcomplicates too much,
+#just change it in sublime-settings
 
 class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
     """Input for name of exercise. Not case/spacing/symbol-sensitive"""
@@ -308,4 +325,5 @@ class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
             sublime.save_settings(settings_filename)
             print("Current 'open path to directory (download)' setting: " + str(exer_settings.get("toggle_open_path_download")))
 
-#TODO: Update Readme
+#TODO: Maybe change download to grab the command and just run? Much simpler script.
+#Figure out way to make both work (check for spaces?)
