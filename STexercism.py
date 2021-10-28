@@ -7,6 +7,13 @@ import os
 
 settings_filename = "STexercism.sublime-settings"
 
+def convert(text): 
+    """Converts the name of the exercise into usable names for cmd"""
+    s = ''.join(ch for ch in text if ch.isalnum() or ch == " ")
+    str_list = s.strip().split()
+    return "-".join(str_list).lower()
+
+#GENERAL USE COMMANDS
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     """submits the current file open on Sublime Text"""
     def run(self, edit):
@@ -91,13 +98,6 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                     + "\n\nMaybe you are checking the wrong file? Also check your flags in sublime-settings")
 #TODO_IDEA: Add more tracks, possibly make it a list on Sublime to not fill command list.
 
-
-def convert(text): 
-    """Converts the name of the exercise into usable names for cmd"""
-    s = ''.join(ch for ch in text if ch.isalnum() or ch == " ")
-    str_list = s.strip().split()
-    return "-".join(str_list).lower()
-
 class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
     """Input for name of exercise. Not case/spacing/symbol-sensitive"""
     def name(self):
@@ -157,21 +157,7 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
 #(Very track-specific and no consistent way to do so)
 #Possibly for python: get dir > do ls on dir > find the file with the correct type (.py) and doesn't have "_test"
 
-class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
-    """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
-    def run(self, edit):
-        exer_settings = sublime.load_settings(settings_filename)
-        try:
-            exer_settings.set(
-                "pytest_ini_toggle", 
-                not exer_settings.get("pytest_ini_toggle"))
-            sublime.save_settings(settings_filename)
-            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
-        except:
-            exer_settings.set("pytest_ini_toggle", False)
-            sublime.save_settings(settings_filename)
-            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
-
+#MAINTENANCE PROGRAMS
 class StexercismVersionCheckCommand(sublime_plugin.TextCommand):
     """Checks version of CLI"""
     def run(self, edit):
@@ -229,6 +215,22 @@ class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
                     err.returncode,
                     err.output.decode('UTF-8').strip()))
 
+#TOGGLES
+class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
+    """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
+    def run(self, edit):
+        exer_settings = sublime.load_settings(settings_filename)
+        try:
+            exer_settings.set(
+                "pytest_ini_toggle", 
+                not exer_settings.get("pytest_ini_toggle"))
+            sublime.save_settings(settings_filename)
+            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
+        except:
+            exer_settings.set("pytest_ini_toggle", False)
+            sublime.save_settings(settings_filename)
+            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
+
 class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
     """Toggles the option to open path to exercism/ when running workspace command"""
     def run(self, edit):
@@ -243,6 +245,7 @@ class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
             exer_settings.set("toggle_open_path_workspace", False)
             sublime.save_settings(settings_filename)
             print("Current pytest.ini auto-create setting: " + str(exer_settings.get("toggle_open_path_workspace")))
-#Note: I haven't tested this on Mac or linux b/c I don't have those OSes
+#NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
+
 #TODO: Condense the toggles into one program to save space
 #TODO: Condense Update/Workspace/Version into "Maintenance" command to save space

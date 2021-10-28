@@ -7,8 +7,8 @@
     //MAINTENANCE COMMANDS
     {"caption": "STexercism: Checks Workspace", "command": "stexercism_workspace"},
     {"caption": "STexercism: Update CLI", "command": "stexercism_update"},
+    {"caption": "STexercism: Check current version", "command": "stexercism_version_check"},
     //TOGGLES
     {"caption": "STexercism: Toggle auto-create for pytest.ini (Python)", "command": "stexercism_toggle_pytest_ini"},
-    {"caption": "STexercism: Check current version", "command": "stexercism_version_check"},
     {"caption": "STexercism: Toggle opening directory for Workspace Command", "command": "stexercism_toggle_open_window_workspace"}
 ]
