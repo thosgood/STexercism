@@ -16,6 +16,9 @@
 	"pytest_ini_toggle": false,
     ///Toggles whether the path to exercism/ opens when you run the workspace command.
     "toggle_open_path_workspace": true,
+    //Toggles whether the folder containing the new exercise downloaded opens when you run
+    //the download command.
+    "toggle_open_path_download": true,
 	//This is the full track list for exercism. Currently don't know of way to
 	//Make auto-update from website.
 	//DO NOT CHANGE THIS OR YOU WILL BE MISSING TRACKS/RUN INTO ERRORS
@@ -79,8 +82,8 @@
     //DO NOT CHANGE
     "toggle_command_list": [
         ["STexercism: Toggle auto-create for pytest.ini (Python)", "stexercism_toggle_pytest_ini"],
-        ["STexercism: Toggle opening directory for Workspace Command", "stexercism_toggle_open_window_workspace"]
-    ],
+        ["STexercism: Toggle opening directory for Workspace Command", "stexercism_toggle_open_window_workspace"],
+        ["STexercism: Toggle Opening Directory for Download Command", "stexercism_toggle_open_window_download"]],
     //List of Maintenance commands
     //DO NOT CHANGE
     "maint_command_list": [

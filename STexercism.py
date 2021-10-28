@@ -140,6 +140,19 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
                 f.write("[pytest]\nmarkers =\n    task: A concept exercise task.")
                 f.close()
                 print("\npytest.ini file created at directory: " + directory_name)
+            #This next part opens the directory to downloaded exercise
+            if exer_settings.get("toggle_open_path_download"):
+                path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
+                if platform == "win32":
+                    os.startfile(path)
+                elif platform == "darwin":
+                    subprocess.Popen([
+                        "open",
+                        path])
+                else:
+                    subprocess.Popen([
+                        "xdg-open",
+                        path])
         except subprocess.CalledProcessError as err:
             raise RuntimeError(
                 "command '{}' returned with error (code {}): {}.".format(
@@ -152,10 +165,6 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             return StexercismExerciseNameInputHandler()
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
-#TODO: Add toggle for opening folder to program? Possibly make opening file unnecessary
-#TODO_IDEA: Can also include option for auto opening the file that you downloaded?
-#(Very track-specific and no consistent way to do so)
-#Possibly for python: get dir > do ls on dir > find the file with the correct type (.py) and doesn't have "_test"
 
 #MAINTENANCE PROGRAMS
 class StexercismMaintListInputHandler(sublime_plugin.ListInputHandler):
@@ -278,9 +287,25 @@ class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
                 "toggle_open_path_workspace", 
                 not exer_settings.get("toggle_open_path_workspace"))
             sublime.save_settings(settings_filename)
-            print("Current 'open window when using workspace' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
+            print("Current 'open path to directory (workshop)' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
         except:
-            exer_settings.set("toggle_open_path_workspace", False)
+            exer_settings.set("toggle_open_path_workspace", True)
             sublime.save_settings(settings_filename)
-            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("toggle_open_path_workspace")))
+            print("Current 'open path to directory (workshop)' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
 #NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
+
+class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        exer_settings = sublime.load_settings(settings_filename)
+        try:
+            exer_settings.set(
+                "toggle_open_path_download", 
+                not exer_settings.get("toggle_open_path_download"))
+            sublime.save_settings(settings_filename)
+            print("Current 'open path to directory (download)' setting: " + str(exer_settings.get("toggle_open_path_download")))
+        except:
+            exer_settings.set("toggle_open_path_download", True)
+            sublime.save_settings(settings_filename)
+            print("Current 'open path to directory (download)' setting: " + str(exer_settings.get("toggle_open_path_download")))
+
+#TODO: Update Readme
