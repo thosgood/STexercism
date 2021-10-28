@@ -4,6 +4,7 @@ import subprocess
 import re
 
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
+    """submits the current file open on Sublime Text"""
     def run(self, edit):
         try:
             submit_cli = subprocess.check_output(
@@ -25,7 +26,9 @@ class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
 
 # TODO: make sure you get the right file? this would be very language dependent
 
+#Idk if this doesn't work for me or for anyone else? I can try messing with this and get it to work
 class StexercismOpenCurrentExerciseCommand(sublime_plugin.TextCommand):
+    """Opens the current exercise's website page"""
     def run(self, edit):
         match = re.search(
             r'exercism/\w*/([-\w]*)/',
@@ -38,6 +41,7 @@ class StexercismOpenCurrentExerciseCommand(sublime_plugin.TextCommand):
 
 #TODO: add options for flags -x and -ff, prolly off a listinput
 class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
+    """(Python only) Tests the current file using pytest"""
     def run(self, edit):
         try:
             submit_cli = subprocess.check_output(
@@ -73,6 +77,7 @@ def convert(text):
     return "-".join(str_list).lower()
 
 class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
+    """Input for name of exercise. Not case/spacing/symbol-sensitive"""
     def name(self):
         return "exername"
 
@@ -84,6 +89,7 @@ class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
             return StexercismTrackNameInputHandler()
 
 class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
+    """Lists out all the tracks to pick"""
     def list_items(self):
         return track_list
 
@@ -91,8 +97,9 @@ class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
         return "Track Name"
 
 #TODO: Have a settings option for if you want pytest.ini to auto create?
-#Can also include option for auto opening the file that you downloaded
+#Can also include option for auto opening the file that you downloaded (Just some couple variables for switches)
 class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
+    """Uses gathered input to download an exercise file"""
     def run(self, edit, exername, stexercism_track_name): 
         try:
             submit_cli = subprocess.check_output(
@@ -181,4 +188,6 @@ track_list = [
     ('x86-64 Assembly', 'x86-64-assembly')]
 
 #TODO: Add command to create pytest.ini in file's directory to prevent warnings if the track is python
-#if possible make it work with Download (Can get last 
+#if possible make it work with Download (get last line for dir and make new file)
+
+#TODO: Figure out how to make config file so settings command can work
