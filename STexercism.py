@@ -2,6 +2,8 @@ import sublime
 import sublime_plugin
 import subprocess
 import re
+from sys import platform
+import os
 
 settings_filename = "STexercism.sublime-settings"
 
@@ -116,7 +118,6 @@ class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
     def placeholder(self):
         return "Track Name"
 
-
 class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     """Uses gathered input to download an exercise file"""
     def run(self, edit, exername, stexercism_track_name): 
@@ -151,6 +152,7 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             return StexercismExerciseNameInputHandler()
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
+#TODO: Add toggle for opening folder to program? Possibly make opening file unnecessary
 #TODO_IDEA: Can also include option for auto opening the file that you downloaded?
 #(Very track-specific and no consistent way to do so)
 #Possibly for python: get dir > do ls on dir > find the file with the correct type (.py) and doesn't have "_test"
@@ -208,11 +210,39 @@ class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
             print(submit_cli.decode('UTF-8').strip())
             path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
             
+            if sublime.load_settings(settings_filename).load_settings("toggle_open_path_workspace"):
+                #Checks what OS will work
+                if platform == "win32":
+                    os.startfile(path)
+                elif platform == "darwin":
+                    subprocess.Popen([
+                        "open",
+                        path])
+                else:
+                    subprocess.Popen([
+                        "xdg-open",
+                        path])
         except subprocess.CalledProcessError as err:
             raise RuntimeError(
                 "command '{}' returned with error (code {}): {}.".format(
                     err.cmd,
                     err.returncode,
                     err.output.decode('UTF-8').strip()))
+
+class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
+    """Toggles the option to open path to exercism/ when running workspace command"""
+    def run(self, edit):
+        exer_settings = sublime.load_settings(settings_filename)
+        try:
+            exer_settings.set(
+                "toggle_open_path_workspace", 
+                not exer_settings.get("toggle_open_path_workspace"))
+            sublime.save_settings(settings_filename)
+            print("Current 'open window when using workspace' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
+        except:
+            exer_settings.set("toggle_open_path_workspace", False)
+            sublime.save_settings(settings_filename)
+            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("toggle_open_path_workspace")))
+#Note: I haven't tested this on Mac or linux b/c I don't have those OSes
 #TODO: Condense the toggles into one program to save space
 #TODO: Condense Update/Workspace/Version into "Maintenance" command to save space

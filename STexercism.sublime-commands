@@ -1,10 +1,14 @@
 [
+	//GENERAL USE COMMANDS
     {"caption": "STexercism: Submit current exercise file", "command": "stexercism_submit_current_file"},
     {"caption": "STexercism: Open current exercise on the website", "command": "stexercism_open_current_exercise"},
     {"caption": "STexercism: Test current exercise file (Python)", "command": "stexercism_test_current_file_python"},
     {"caption": "STexercism: Download an exercise file", "command": "stexercism_download_file", "args": {}},
+    //MAINTENANCE COMMANDS
+    {"caption": "STexercism: Checks Workspace", "command": "stexercism_workspace"},
+    {"caption": "STexercism: Update CLI", "command": "stexercism_update"},
+    //TOGGLES
     {"caption": "STexercism: Toggle auto-create for pytest.ini (Python)", "command": "stexercism_toggle_pytest_ini"},
     {"caption": "STexercism: Check current version", "command": "stexercism_version_check"},
-    {"caption": "STexercism: Update CLI", "command": "stexercism_update"},
-    {"caption": "STexercism: Checks Workspace and", "command": "stexercism_workspace"}
+    {"caption": "STexercism: Toggle opening directory for Workspace Command", "command": "stexercism_toggle_open_window_workspace"}
 ]
