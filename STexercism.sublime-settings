@@ -18,7 +18,7 @@
 	//Make auto-update from website.
 	//DO NOT CHANGE THIS OR YOU WILL BE MISSING TRACKS/RUN INTO ERRORS
 	"track_list": [
-		["Bash", "bash"],
+	["Bash", "bash"],
     ["C", "c"],
     ["C#", "csharp"],
     ["C++", "cpp"],

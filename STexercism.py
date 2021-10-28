@@ -153,7 +153,7 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             return StexercismTrackNameInputHandler()
 #TODO_IDEA: Can also include option for auto opening the file that you downloaded?
 #(Very track-specific and no consistent way to do so)
-#Possibly: get dir > do ls on dir > find the file with the correct ender (.py) and doesn't have "_test"
+#Possibly for python: get dir > do ls on dir > find the file with the correct type (.py) and doesn't have "_test"
 
 class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
     """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
