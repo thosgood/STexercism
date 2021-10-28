@@ -9,6 +9,68 @@
 	//"-pdb" will allow you to look at variables and how the code responds.
 	//Only turn on "-pdb" if you want to really debug.
 	//If you wish to add multiple flags, add them into the list.
-	"pytest_testing_flags": []
-
+	"pytest_testing_flags": [],
+	//This is a toggle for if you want a pytest.ini file to be created with
+	//the download of the exercise for the Python track.
+	//This removes the pesky WARNINGs about custom marks you get from running pytest.
+	"pytest_ini_toggle": false,
+	//This is the full track list for exercism. Currently don't know of way to
+	//Make auto-update from website.
+	//DO NOT CHANGE THIS OR YOU WILL BE MISSING TRACKS/RUN INTO ERRORS
+	"track_list": [
+		["Bash", "bash"],
+    ["C", "c"],
+    ["C#", "csharp"],
+    ["C++", "cpp"],
+    ["CFML", "cfml"],
+    ["Clojure", "clojure"],
+    ["ClojureScript", "clojurescript"],
+    ["CoffeeScript", "coffeescript"],
+    ["Common Lisp", "common-lisp"],
+    ["Crystal", "crystal"],
+    ["D", "d"],
+    ["Dart", "dart"],
+    ["Delphi Pascal", "delphi"],
+    ["Elixir", "elixir"],
+    ["Elm", "elm"],
+    ["Emacs Lisp", "emacs-lisp"],
+    ["Erlang", "erlang"],
+    ["F#", "fsharp"],
+    ["Fortran", "fortran"],
+    ["Go", "go"],
+    ["Groovy", "groovy"],
+    ["Haskell", "haskell"],
+    ["Java", "java"],
+    ["Javascript", "javascript"],
+    ["Julia", "julia"],
+    ["Kotlin", "kotlin"],
+    ["LFE", "lfe"],
+    ["Lua", "lua"],
+    ["MIPS Assembly", "mips"],
+    ["Nim", "nim"],
+    ["Objective-C", "objctive-c"],
+    ["OCaml", " ocaml"],
+    ["Perl 5", "perl5"],
+    ["Pharo", "pharo-smalltalk"],
+    ["PHP", "php"],
+    ["PL/SQL", "plsql"],
+    ["Prolog", "prolog"],
+    ["PureScript", "purescript"],
+    ["Python", "python"],
+    ["R", "r"],
+    ["Racket", "racket"],
+    ["Raku", "raku"],
+    ["ReasonML", "reasonml"],
+    ["Ruby", "ruby"],
+    ["Rust", "rust"],
+    ["Scala", "scala"],
+    ["Scheme", "scheme"],
+    ["Standard ML", " sml"],
+    ["Swift", "swift"],
+    ["Tcl", "tcl"],
+    ["Typescript", "typescript"],
+    ["VB.NET", "vbnet"],
+    ["Vim script", "vimscript"],
+    ["Wren", "wren"],
+    ["x86-64 Assembly", "x86-64-assembly"]]
 }

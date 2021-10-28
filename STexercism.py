@@ -97,7 +97,7 @@ class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
 class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
     """Lists out all the tracks to pick"""
     def list_items(self):
-        return track_list
+        return sublime.load_settings(settings_filename).get("track_list")
 
     def placeholder(self):
         return "Track Name"
@@ -141,64 +141,6 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
 
-#TODO: Figure out how to make track_list a different file
-#or even possibly a way to auto-update from the website?
-track_list = [
-    ('Bash', 'bash'),
-    ('C', 'c'),
-    ('C#', 'csharp'),
-    ('C++', 'cpp'),
-    ('CFML', 'cfml'),
-    ('Clojure', 'clojure'),
-    ('ClojureScript', 'clojurescript'),
-    ('CoffeeScript', 'coffeescript'),
-    ('Common Lisp', 'common-lisp'),
-    ('Crystal', 'crystal'),
-    ('D', 'd'),
-    ('Dart', 'dart'),
-    ('Delphi Pascal', 'delphi'),
-    ('Elixir', 'elixir'),
-    ('Elm', 'elm'),
-    ('Emacs Lisp', 'emacs-lisp'),
-    ('Erlang', 'erlang'),
-    ('F#', 'fsharp'),
-    ('Fortran', 'fortran'),
-    ('Go', 'go'),
-    ('Groovy', 'groovy'),
-    ('Haskell', 'haskell'),
-    ('Java', 'java'),
-    ('Javascript', 'javascript'),
-    ('Julia', 'julia'),
-    ('Kotlin', 'kotlin'),
-    ('LFE', 'lfe'),
-    ('Lua', 'lua'),
-    ('MIPS Assembly', 'mips'),
-    ('Nim', 'nim'),
-    ('Objective-C', 'objctive-c'),
-    ('OCaml', ' ocaml'),
-    ('Perl 5', 'perl5'),
-    ('Pharo', 'pharo-smalltalk'),
-    ('PHP', 'php'),
-    ('PL/SQL', 'plsql'),
-    ('Prolog', 'prolog'),
-    ('PureScript', 'purescript'),
-    ('Python', 'python'),
-    ('R', 'r'),
-    ('Racket', 'racket'),
-    ('Raku', 'raku'),
-    ('ReasonML', 'reasonml'),
-    ('Ruby', 'ruby'),
-    ('Rust', 'rust'),
-    ('Scala', 'scala'),
-    ('Scheme', 'scheme'),
-    ('Standard ML', ' sml'),
-    ('Swift', 'swift'),
-    ('Tcl', 'tcl'),
-    ('Typescript', 'typescript'),
-    ('VB.NET', 'vbnet'),
-    ('Vim script', 'vimscript'),
-    ('Wren', 'wren'),
-    ('x86-64 Assembly', 'x86-64-assembly')]
 class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
     """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
     def run(self, edit):
