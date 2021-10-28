@@ -4,7 +4,6 @@ import subprocess
 import re
 
 settings_filename = "STexercism.sublime-settings"
-exer_settings = sublime.load_settings(settings_filename)
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     """submits the current file open on Sublime Text"""
     def run(self, edit):
@@ -45,6 +44,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
     """(Python only) Tests the current file using pytest"""
     def run(self, edit):
         try:
+            exer_settings = sublime.load_settings(settings_filename)
             print_list = ["python", "-m", "pytest"]
             print_list.extend(exer_settings.get("pytest_testing_flags"))
             print_list.append(self.view.file_name()[:-3]+"_test.py")
@@ -108,6 +108,7 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     """Uses gathered input to download an exercise file"""
     def run(self, edit, exername, stexercism_track_name): 
         try:
+            exer_settings = sublime.load_settings(settings_filename)
             submit_cli = subprocess.check_output(
                 ["exercism",
                 "download",
@@ -196,4 +197,5 @@ track_list = [
 #TODO: Add command to create pytest.ini in file's directory to prevent warnings if the track is python
 #if possible make it work with Download (get last line for dir and make new file)
 
-#TODO: Figure out how to make config file so settings command can work
+#TODO: Add command to create pytest.ini in file's directory to prevent warnings if the track is python
+#if possible make it work with Download (get last line for dir and make new file) (very difficult for multiple tracks)
