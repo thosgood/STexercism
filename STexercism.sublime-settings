@@ -9,6 +9,6 @@
 	//"-pdb" will allow you to look at variables and how the code responds.
 	//Only turn on "-pdb" if you want to really debug.
 	//If you wish to add multiple flags, add them into the list.
-	"testing_flags": []
+	"pytest_testing_flags": []
 
 }

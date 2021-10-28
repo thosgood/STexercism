@@ -4,7 +4,6 @@ import subprocess
 import re
 
 settings_filename = "STexercism.sublime-settings"
-print(sublime.load_settings(settings_filename).get("testing_flags"))
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     """submits the current file open on Sublime Text"""
     def run(self, edit):
@@ -46,7 +45,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         try:
             print_list = ["python", "-m", "pytest"]
-            print_list.extend(sublime.load_settings(settings_filename).get("testing_flags"))
+            print_list.extend(sublime.load_settings(settings_filename).get("pytest_testing_flags"))
             print_list.append(self.view.file_name()[:-3]+"_test.py")
             submit_cli = subprocess.check_output(
                 print_list,
@@ -55,7 +54,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                 "show_panel",
                 {"panel": "console", "toggle": True})
             print(submit_cli.decode('UTF-8').strip())
-            print(sublime.load_settings(settings_filename).get("testing_flags"))
+            print(sublime.load_settings(settings_filename).get("pytest_testing_flags"))
         except TypeError:
             raise RuntimeError(
                 "command '{}' returned with error (code {}): {}.".format(
