@@ -10,7 +10,7 @@
 	//Only turn on "-pdb" if you want to really debug.
 	//If you wish to add multiple flags, add them into the list.
 	"pytest_testing_flags": [],
-	//This is a toggle for if you want a pytest.ini file to be created with
+	//Toggles whether want a pytest.ini file to be created with
 	//the download of the exercise for the Python track.
 	//This removes the pesky WARNINGs about custom marks you get from running pytest.
 	"pytest_ini_toggle": false,

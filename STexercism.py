@@ -169,3 +169,50 @@ class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
             exer_settings.set("pytest_ini_toggle", False)
             sublime.save_settings(settings_filename)
             print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
+
+class StexercismVersionCheckCommand(sublime_plugin.TextCommand):
+    """Checks version of CLI"""
+    def run(self, edit):
+        submit_cli = subprocess.check_output(
+            ["exercism",
+            "version"],
+            stderr=subprocess.STDOUT)
+        sublime.active_window().run_command(
+            "show_panel",
+            {"panel": "console", "toggle": True})
+        print(submit_cli.decode('UTF-8').strip())
+
+class StexercismUpdateCommand(sublime_plugin.TextCommand):
+    """Updates CLI"""
+    def run(self, edit):
+        submit_cli = subprocess.check_output(
+            ["exercism",
+            "upgrade"],
+            stderr=subprocess.STDOUT)
+        sublime.active_window().run_command(
+            "show_panel",
+            {"panel": "console", "toggle": True})
+        print(submit_cli.decode('UTF-8').strip())
+
+class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
+    """Finds the directory to exercism and opens in File Explorer if on Windows"""
+    def run(self, edit):
+        try:
+            submit_cli = subprocess.check_output(
+                ["exercism",
+                "workspace"],
+                stderr=subprocess.STDOUT)
+            sublime.active_window().run_command(
+                "show_panel",
+                {"panel": "console", "toggle": True})
+            print(submit_cli.decode('UTF-8').strip())
+            path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
+            
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+                "command '{}' returned with error (code {}): {}.".format(
+                    err.cmd,
+                    err.returncode,
+                    err.output.decode('UTF-8').strip()))
+#TODO: Condense the toggles into one program to save space
+#TODO: Condense Update/Workspace/Version into "Maintenance" command to save space
