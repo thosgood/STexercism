@@ -19,12 +19,12 @@
     "toggle_open_path_workspace": true,
     //Toggles whether the folder containing the new exercise downloaded opens when you run
     //the download command.
-    "toggle_open_path_download": true,
+    "toggle_open_path_download": false,
     //Toggles whether the website that you submitted to is opened when you submit an exercise.
     "toggle_open_site_submit": false,
 	//This is the full track list for exercism. Currently don't know of way to
 	//Make auto-update from website.
-	//DO NOT CHANGE THIS OR YOU WILL BE MISSING TRACKS/RUN INTO ERRORS
+	//DO NOT CHANGE
 	"track_list": [
 	["Bash", "bash"],
     ["C", "c"],
