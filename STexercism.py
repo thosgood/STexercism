@@ -4,6 +4,7 @@ import subprocess
 import re
 from sys import platform
 import os
+import webbrowser
 
 settings_filename = "STexercism.sublime-settings"
 
@@ -18,6 +19,7 @@ class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     """submits the current file open on Sublime Text"""
     def run(self, edit):
         try:
+            exer_settings = sublime.load_settings(settings_filename)
             submit_cli = subprocess.check_output(
                 ["exercism",
                 "submit",
@@ -27,6 +29,8 @@ class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
                 "show_panel",
                 {"panel": "console", "toggle": True})
             print(submit_cli.decode('UTF-8').strip())
+            if exer_settings.get("toggle_open_site_submit"):
+                webbrowser.open_new(submit_cli.decode('UTF-8').strip().split("\n")[-1].strip())
         except subprocess.CalledProcessError as err:
             raise RuntimeError(
                 "command '{}' returned with error (code {}): {}.".format(
@@ -318,4 +322,19 @@ class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
         except:
             exer_settings.set("toggle_open_path_download", True)
             sublime.save_settings(settings_filename)
-            print("Current 'open path to directory (download)' setting: " + str(exer_settings.get("toggle_open_path_download")))
+            print("Current 'open path to directory (download)' setting: {}".format(exer_settings.get("toggle_open_path_download")))
+#NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
+
+class StexercismToggleOpenSiteSubmitCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        exer_settings = sublime.load_settings(settings_filename)
+        try:
+            exer_settings.set(
+                "toggle_open_site_submit",
+                not exer_settings.get("toggle_open_site_submit"))
+            sublime.save_settings(settings_filename)
+            print("Current 'open site to exercise (submit)' setting: {}".format(exer_settings.get("toggle_open_site_submit")))
+        except:
+            exer_settings.set("toggle_open_site_submit", False)
+            sublime.save_settings(settings_filename)
+            print("Current 'open site to exercise (submit)' setting: {}".format(exer_settings.get("toggle_open_site_submit")))

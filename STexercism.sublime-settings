@@ -8,7 +8,8 @@
 	//"--ff" will show the failures first.
 	//"--pdb" will allow you to look at variables and how the code responds.
 	//Only turn on "-pdb" if you want to really debug.
-	//If you wish to add multiple flags, add them into the list.
+	//If you wish to add multiple flags, add them into the list as separate entries.
+    //(e.g. ["-x", "--ff"])
 	"pytest_testing_flags": [],
 	//Toggles whether want a pytest.ini file to be created with
 	//the download of the exercise for the Python track.
@@ -19,6 +20,8 @@
     //Toggles whether the folder containing the new exercise downloaded opens when you run
     //the download command.
     "toggle_open_path_download": true,
+    //Toggles whether the website that you submitted to is opened when you submit an exercise.
+    "toggle_open_site_submit": false,
 	//This is the full track list for exercism. Currently don't know of way to
 	//Make auto-update from website.
 	//DO NOT CHANGE THIS OR YOU WILL BE MISSING TRACKS/RUN INTO ERRORS
@@ -83,7 +86,8 @@
     "toggle_command_list": [
         ["STexercism: Toggle auto-create for pytest.ini (Python)", "stexercism_toggle_pytest_ini"],
         ["STexercism: Toggle opening directory for Workspace Command", "stexercism_toggle_open_window_workspace"],
-        ["STexercism: Toggle Opening Directory for Download Command", "stexercism_toggle_open_window_download"]],
+        ["STexercism: Toggle Opening Directory for Download Command", "stexercism_toggle_open_window_download"],
+        ["STexercism: Toggle Opening Website for Submit Command", "stexercism_toggle_open_site_submit"]],
     //List of Maintenance commands
     //DO NOT CHANGE
     "maint_command_list": [
