@@ -110,7 +110,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                             err.output.decode('UTF-8').strip())
                         + "\n\nMaybe you are checking the wrong file?")
 #TODO_IDEA: Add more tracks, possibly make it a list on Sublime to not fill command list.
-#TODO_DROPPED: Make toggle command that accepts user command to update flags list for test command.
+#DROPPED: Make toggle command that accepts user command to update flags list for test command.
 #Already have a failsafe in case the flags are invalid so should be fine
 #REASON: Unable to put into the List of Toggles command + overcomplicates too much,
 #just change it in sublime-settings
@@ -182,6 +182,10 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             return StexercismExerciseNameInputHandler()
         elif 'stexercism_track_name' not in args:
             return StexercismTrackNameInputHandler()
+#DROPPED: Maybe change download to grab the command and just run? Much simpler script.
+#Figure out way to make both work (check for spaces?)
+#REASON: That would involve essentially rewriting the entire command and making it take a variable
+#amount of inputs. If wanted I can change code to be one or the other but for now, can't do both together.
 
 #MAINTENANCE PROGRAMS
 class StexercismMaintListInputHandler(sublime_plugin.ListInputHandler):
@@ -325,5 +329,4 @@ class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
             sublime.save_settings(settings_filename)
             print("Current 'open path to directory (download)' setting: " + str(exer_settings.get("toggle_open_path_download")))
 
-#TODO: Maybe change download to grab the command and just run? Much simpler script.
-#Figure out way to make both work (check for spaces?)
+
