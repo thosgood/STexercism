@@ -226,7 +226,7 @@ class StexercismUpdateCommand(sublime_plugin.TextCommand):
         print(submit_cli.decode('UTF-8').strip())
 
 class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
-    """Finds the directory to exercism and opens in File Explorer if on Windows"""
+    """Finds the directory to exercism and opens file on file browser of OS (if toggled)"""
     def run(self, edit):
         try:
             submit_cli = subprocess.check_output(
@@ -292,7 +292,7 @@ class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
         except:
             exer_settings.set("pytest_ini_toggle", False)
             sublime.save_settings(settings_filename)
-            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
+            print("Failed to change settings.\nCurrent pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
 
 class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
     """Toggles the option to open path to exercism/ when running workspace command"""
@@ -307,7 +307,7 @@ class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
         except:
             exer_settings.set("toggle_open_path_workspace", True)
             sublime.save_settings(settings_filename)
-            print("Current 'open path to directory (workshop)' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
+            print("Failed to change settings.\nCurrent 'open path to directory (workshop)' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
 #NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
 
 class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
@@ -322,7 +322,7 @@ class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
         except:
             exer_settings.set("toggle_open_path_download", True)
             sublime.save_settings(settings_filename)
-            print("Current 'open path to directory (download)' setting: {}".format(exer_settings.get("toggle_open_path_download")))
+            print("Failed to change settings.\nCurrent 'open path to directory (download)' setting: {}".format(exer_settings.get("toggle_open_path_download")))
 #NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
 
 class StexercismToggleOpenSiteSubmitCommand(sublime_plugin.TextCommand):
@@ -337,4 +337,11 @@ class StexercismToggleOpenSiteSubmitCommand(sublime_plugin.TextCommand):
         except:
             exer_settings.set("toggle_open_site_submit", False)
             sublime.save_settings(settings_filename)
-            print("Current 'open site to exercise (submit)' setting: {}".format(exer_settings.get("toggle_open_site_submit")))
+            print("Failed to change settings.\nCurrent 'open site to exercise (submit)' setting: {}".format(exer_settings.get("toggle_open_site_submit")))
+
+#TODO: Make the toggles for download and workspace open on Sublime as part of project
+#instead of opening finder
+#TODO: Chunk out certain repeated code into diff methods e.g.:
+#Print out console command
+#Error code
+#TODO: Fix documentation
