@@ -5,7 +5,7 @@
 	//any optional flags. However, you can change this by changing the list in
 	//Leaving it blank will give you no flags, this is default
 	//"-x" will stop the testing after the first failure.
-	//"--ff" will show the failures first.
+	//"--ff" will test the tests you failed last time first.
 	//"--pdb" will allow you to look at variables and how the code responds.
 	//Only turn on "-pdb" if you want to really debug.
 	//If you wish to add multiple flags, add them into the list as separate entries.
