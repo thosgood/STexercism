@@ -14,7 +14,7 @@
 	//Toggles whether want a pytest.ini file to be created with
 	//the download of the exercise for the Python track.
 	//This removes the pesky WARNINGs about custom marks you get from running pytest.
-	"pytest_ini_toggle": false,
+	"pytest_ini_toggle": true,
     ///Toggles whether the path to exercism/ opens when you run the workspace command.
     "toggle_open_path_workspace": true,
     //Toggles whether the folder containing the new exercise downloaded opens when you run

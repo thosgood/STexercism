@@ -14,7 +14,7 @@ def convert(text):
     str_list = s.strip().split()
     return "-".join(str_list).lower()
 
-def toggleSomething(toggle):
+def toggleSomething(toggle, default = False):
     """Toggles whatever the file needed is"""
     exer_settings = sublime.load_settings(settings_filename)
     try:
@@ -22,12 +22,12 @@ def toggleSomething(toggle):
         sublime.save_settings(settings_filename)
         print("Current '" + toggle + "' setting: {}".format(exer_settings.get(toggle)))
     except:
-        exer_settings.set(toggle, False)
+        exer_settings.set(toggle, default)
         sublime.save_settings(settings_filename)
         print("Failed to change settings.\nCurrent '" + toggle + "' setting: {}".format(exer_settings.get(toggle)))
 
 def cmdType(commands, flag = False):
-    """:param commands: list of all strings to be added in"""
+    """Types a list of strings into the command prompt and returns it into ST's own cmd"""
     submit_cli = subprocess.check_output(commands, stderr = subprocess.STDOUT)
     sublime.active_window().run_command(
                 "show_panel",
@@ -37,6 +37,7 @@ def cmdType(commands, flag = False):
         return submit_cli
 
 def checkOS(path):
+    """Checks what OS the system is on and opens the path given"""
     if platform == "win32":
         os.startfile(path)
     elif platform == "darwin":
@@ -49,6 +50,7 @@ def checkOS(path):
             path])
 
 def errorMsg(err):
+    """Just returns the text that every RuntimeError throws out"""
     return "command '{}' returned with error (code {}): {}.".format(
         err.cmd,
         err.returncode,
@@ -136,6 +138,7 @@ class StexercismTrackNameInputHandler(sublime_plugin.ListInputHandler):
     def placeholder(self):
         return "Track Name"
 
+
 class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     """Uses gathered input to download an exercise file"""
     def run(self, edit, exername, stexercism_track_name): 
@@ -180,6 +183,7 @@ class StexercismMaintenanceListCommand(sublime_plugin.TextCommand):
         if 'stexercism_maint_list' not in args:
             return StexercismMaintListInputHandler()
 
+
 class StexercismVersionCheckCommand(sublime_plugin.TextCommand):
     """Checks version of CLI"""
     def run(self, edit):
@@ -195,8 +199,9 @@ class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         try:
             submit_cli = cmdType(["exercism", "workspace"], True)
+            
+            #Toggle for opening path
             if sublime.load_settings(settings_filename).get("toggle_open_path_workspace"):
-                #Checks what OS will work
                 path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
                 checkOS(path)
         except subprocess.CalledProcessError as err:
@@ -222,12 +227,12 @@ class StexercismTogglesListCommand(sublime_plugin.TextCommand):
 class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
     """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
     def run(self, edit):
-        toggleSomething("pytest_ini_toggle")
+        toggleSomething("pytest_ini_toggle", True)
 
 class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
     """Toggles the option to open path to exercism/ when running workspace command"""
     def run(self, edit):
-        toggleSomething("toggle_open_path_workspace")
+        toggleSomething("toggle_open_path_workspace", True)
 #NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
 
 class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
@@ -238,11 +243,6 @@ class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
 class StexercismToggleOpenSiteSubmitCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         toggleSomething("toggle_open_site_submit")
-
-
 #TODO: Make the toggles for download and workspace open on Sublime as part of project
 #instead of opening finder
-#TODO: Chunk out certain repeated code into diff methods e.g.:
-#Print out console command
-#Error code
 #TODO: Add "Download-Multiple"
