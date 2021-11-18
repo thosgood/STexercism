@@ -14,6 +14,17 @@ def convert(text):
     str_list = s.strip().split()
     return "-".join(str_list).lower()
 
+def toggleSomething(toggle):
+    """Toggles whatever the file needed is"""
+    exer_settings = sublime.load_settings(settings_filename)
+    try:
+        exer_settings.set(toggle, not exer_settings.get(toggle))
+        sublime.save_settings(settings_filename)
+        print("Current '" + toggle + "' setting: {}".format(exer_settings.get(toggle)))
+    except:
+        exer_settings.set(toggle, False)
+        sublime.save_settings(settings_filename)
+        print("Failed to change settings.\nCurrent '" + toggle + "' setting: {}".format(exer_settings.get(toggle)))
 #GENERAL USE COMMANDS
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     """submits the current file open on Sublime Text"""
@@ -29,6 +40,7 @@ class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
                 "show_panel",
                 {"panel": "console", "toggle": True})
             print(submit_cli.decode('UTF-8').strip())
+            #Opens site if toggle is on
             if exer_settings.get("toggle_open_site_submit"):
                 webbrowser.open_new(submit_cli.decode('UTF-8').strip().split("\n")[-1].strip())
         except subprocess.CalledProcessError as err:
@@ -92,7 +104,7 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
 
         except subprocess.CalledProcessError as err:
             if err.returncode == 1: #This is an exception only made if there are failed tasks, works fine otherwise
-                print(err.output.decode('UTF-8').strip())
+                print(err.output.decode('latin-1').strip())
             else:
                 try:
                     submit_cli = subprocess.check_output(
@@ -152,9 +164,9 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             #This next part adds a pytest.ini file if you toggled the flag to be true in sublime-settings or through the command
             if stexercism_track_name == 'python' and exer_settings.get("pytest_ini_toggle"):
                 directory_name = submit_cli.decode('UTF-8').strip().split("\n")[-1] + "\\pytest.ini"
-                f = open(directory_name, "w")
-                f.write("[pytest]\nmarkers =\n    task: A concept exercise task.")
-                f.close()
+                file = open(directory_name, "w")
+                file.write("[pytest]\nmarkers =\n    task: A concept exercise task.")
+                file.close()
                 print("\npytest.ini file created at directory: " + directory_name)
             #This next part opens the directory to downloaded exercise
             if exer_settings.get("toggle_open_path_download"):
@@ -282,62 +294,23 @@ class StexercismTogglesListCommand(sublime_plugin.TextCommand):
 class StexercismTogglePytestIniCommand(sublime_plugin.TextCommand):
     """Toggles the option to auto-create a pytest.ini file when downloading a python file"""
     def run(self, edit):
-        exer_settings = sublime.load_settings(settings_filename)
-        try:
-            exer_settings.set(
-                "pytest_ini_toggle", 
-                not exer_settings.get("pytest_ini_toggle"))
-            sublime.save_settings(settings_filename)
-            print("Current pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
-        except:
-            exer_settings.set("pytest_ini_toggle", False)
-            sublime.save_settings(settings_filename)
-            print("Failed to change settings.\nCurrent pytest.ini auto-create setting: " + str(exer_settings.get("pytest_ini_toggle")))
+        toggleSomething("pytest_ini_toggle")
 
 class StexercismToggleOpenWindowWorkspaceCommand(sublime_plugin.TextCommand):
     """Toggles the option to open path to exercism/ when running workspace command"""
     def run(self, edit):
-        exer_settings = sublime.load_settings(settings_filename)
-        try:
-            exer_settings.set(
-                "toggle_open_path_workspace", 
-                not exer_settings.get("toggle_open_path_workspace"))
-            sublime.save_settings(settings_filename)
-            print("Current 'open path to directory (workshop)' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
-        except:
-            exer_settings.set("toggle_open_path_workspace", True)
-            sublime.save_settings(settings_filename)
-            print("Failed to change settings.\nCurrent 'open path to directory (workshop)' setting: " + str(exer_settings.get("toggle_open_path_workspace")))
+        toggleSomething("toggle_open_path_workspace")
 #NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
 
 class StexercismToggleOpenWindowDownloadCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        exer_settings = sublime.load_settings(settings_filename)
-        try:
-            exer_settings.set(
-                "toggle_open_path_download", 
-                not exer_settings.get("toggle_open_path_download"))
-            sublime.save_settings(settings_filename)
-            print("Current 'open path to directory (download)' setting: " + str(exer_settings.get("toggle_open_path_download")))
-        except:
-            exer_settings.set("toggle_open_path_download", True)
-            sublime.save_settings(settings_filename)
-            print("Failed to change settings.\nCurrent 'open path to directory (download)' setting: {}".format(exer_settings.get("toggle_open_path_download")))
+        toggleSomething("toggle_open_path_download")
 #NOTE: I haven't tested this on Mac or linux b/c I don't have those OSes
 
 class StexercismToggleOpenSiteSubmitCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        exer_settings = sublime.load_settings(settings_filename)
-        try:
-            exer_settings.set(
-                "toggle_open_site_submit",
-                not exer_settings.get("toggle_open_site_submit"))
-            sublime.save_settings(settings_filename)
-            print("Current 'open site to exercise (submit)' setting: {}".format(exer_settings.get("toggle_open_site_submit")))
-        except:
-            exer_settings.set("toggle_open_site_submit", False)
-            sublime.save_settings(settings_filename)
-            print("Failed to change settings.\nCurrent 'open site to exercise (submit)' setting: {}".format(exer_settings.get("toggle_open_site_submit")))
+        toggleSomething("toggle_open_site_submit")
+
 
 #TODO: Make the toggles for download and workspace open on Sublime as part of project
 #instead of opening finder
@@ -345,3 +318,4 @@ class StexercismToggleOpenSiteSubmitCommand(sublime_plugin.TextCommand):
 #Print out console command
 #Error code
 #TODO: Fix documentation
+#TODO: Add "Download-Multiple"
