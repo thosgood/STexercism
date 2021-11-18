@@ -25,30 +25,47 @@ def toggleSomething(toggle):
         exer_settings.set(toggle, False)
         sublime.save_settings(settings_filename)
         print("Failed to change settings.\nCurrent '" + toggle + "' setting: {}".format(exer_settings.get(toggle)))
+
+def cmdType(commands, flag = False):
+    """:param commands: list of all strings to be added in"""
+    submit_cli = subprocess.check_output(commands, stderr = subprocess.STDOUT)
+    sublime.active_window().run_command(
+                "show_panel",
+                {"panel": "console", "toggle": True})
+    print(submit_cli.decode('latin-1').strip())
+    if flag:
+        return submit_cli
+
+def checkOS(path):
+    if platform == "win32":
+        os.startfile(path)
+    elif platform == "darwin":
+        subprocess.Popen([
+            "open",
+            path])
+    else:
+        subprocess.Popen([
+            "xdg-open",
+            path])
+
+def errorMsg(err):
+    return "command '{}' returned with error (code {}): {}.".format(
+        err.cmd,
+        err.returncode,
+        err.output.decode('UTF-8').strip())
+
 #GENERAL USE COMMANDS
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
     """submits the current file open on Sublime Text"""
     def run(self, edit):
         try:
+            submit_cli = cmdType(["exercism", "submit", self.view.file_name()], True)
             exer_settings = sublime.load_settings(settings_filename)
-            submit_cli = subprocess.check_output(
-                ["exercism",
-                "submit",
-                self.view.file_name()],
-                stderr=subprocess.STDOUT)
-            sublime.active_window().run_command(
-                "show_panel",
-                {"panel": "console", "toggle": True})
-            print(submit_cli.decode('UTF-8').strip())
             #Opens site if toggle is on
             if exer_settings.get("toggle_open_site_submit"):
                 webbrowser.open_new(submit_cli.decode('UTF-8').strip().split("\n")[-1].strip())
         except subprocess.CalledProcessError as err:
-            raise RuntimeError(
-                "command '{}' returned with error (code {}): {}.".format(
-                    err.cmd,
-                    err.returncode,
-                    err.output.decode('UTF-8').strip())
+            raise RuntimeError(errorMsg(err)
                 + "\n\nMaybe you submitted the wrong file?")
 # TODO: make sure you get the right file? this would be very language dependent
 
@@ -70,11 +87,7 @@ class StexercismOpenCurrentExerciseCommand(sublime_plugin.TextCommand):
                     + "\nMake sure the directory ends with"
                     + "\n'exercism\\EXERISE_NAME\\FILE_NAME.TYPE'")
         except subprocess.CalledProcessError as err:
-            raise RuntimeError(
-                "command '{}' returned with error (code {}): {}.".format(
-                    err.cmd,
-                    err.returncode,
-                    err.output.decode('UTF-8').strip())
+            raise RuntimeError(errorMsg(err)
                 + "\n\nIs the directory correct?\n"
                 + match.group(0)
                 + self.view.file_name())
@@ -87,19 +100,9 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
             print_list = ["python", "-m", "pytest"]
             print_list.extend(exer_settings.get("pytest_testing_flags"))
             print_list.append(self.view.file_name()[:-3]+"_test.py")
-            submit_cli = subprocess.check_output(
-                print_list,
-                stderr=subprocess.STDOUT)
-            sublime.active_window().run_command(
-                "show_panel",
-                {"panel": "console", "toggle": True})
-            print(submit_cli.decode('UTF-8').strip())
+            cmdType(print_list)
         except TypeError as err:
-            raise RuntimeError(
-                "command '{}' returned with error (code {}): {}.".format(
-                    err.cmd,
-                    err.returncode,
-                    err.output.decode('UTF-8').strip())
+            raise RuntimeError(errorMsg(err)
                 + "\n\nFlag list doesn't exist or is missing. Please check sublime-settings.")
 
         except subprocess.CalledProcessError as err:
@@ -107,23 +110,10 @@ class StexercismTestCurrentFilePythonCommand(sublime_plugin.TextCommand):
                 print(err.output.decode('latin-1').strip())
             else:
                 try:
-                    submit_cli = subprocess.check_output(
-                        ["python",
-                        "-m",
-                        "pytest",
-                        self.view.file_name()[:-3]+"_test.py"],
-                        stderr=subprocess.STDOUT)
-                    sublime.active_window().run_command(
-                        "show_panel",
-                        {"panel": "console", "toggle": True})
-                    print(submit_cli.decode('UTF-8').strip()
-                    + "\nWARNING: Invalid flags. Please check sublime-settings.\nTest has been run with no flags.")
+                    cmdtype(["python", "-m", "pytest", self.view.file_name()[:-3]+"_test.py"])
+                    print("WARNING: Invalid flags. Please check sublime-settings.\nTest has been run with no flags.")
                 except:
-                    raise RuntimeError(
-                        "command '{}' returned with error (code {}): {}.".format(
-                            err.cmd,
-                            err.returncode,
-                            err.output.decode('UTF-8').strip())
+                    raise RuntimeError(errorMsg(err)
                         + "\n\nMaybe you are checking the wrong file?")
 
 class StexercismExerciseNameInputHandler(sublime_plugin.TextInputHandler):
@@ -151,16 +141,10 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
     def run(self, edit, exername, stexercism_track_name): 
         try:
             exer_settings = sublime.load_settings(settings_filename)
-            submit_cli = subprocess.check_output(
-                ["exercism",
-                "download",
-                "--exercise=" + convert(exername),
-                "--track=" + stexercism_track_name],
-                stderr=subprocess.STDOUT)
-            sublime.active_window().run_command(
-                "show_panel",
-                {"panel": "console", "toggle": True})
-            print(submit_cli.decode('UTF-8').strip())
+            submit_cli = cmdType(["exercism",
+                    "download",
+                    "--exercise=" + convert(exername),
+                    "--track=" + stexercism_track_name], True)
             #This next part adds a pytest.ini file if you toggled the flag to be true in sublime-settings or through the command
             if stexercism_track_name == 'python' and exer_settings.get("pytest_ini_toggle"):
                 directory_name = submit_cli.decode('UTF-8').strip().split("\n")[-1] + "\\pytest.ini"
@@ -171,22 +155,9 @@ class StexercismDownloadFileCommand(sublime_plugin.TextCommand):
             #This next part opens the directory to downloaded exercise
             if exer_settings.get("toggle_open_path_download"):
                 path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
-                if platform == "win32":
-                    os.startfile(path)
-                elif platform == "darwin":
-                    subprocess.Popen([
-                        "open",
-                        path])
-                else:
-                    subprocess.Popen([
-                        "xdg-open",
-                        path])
+                checkOS(path)
         except subprocess.CalledProcessError as err:
-            raise RuntimeError(
-                "command '{}' returned with error (code {}): {}.".format(
-                    err.cmd,
-                    err.returncode,
-                    err.output.decode('UTF-8').strip()))
+            raise RuntimeError(errorMsg(err))
 
     def input(self, args):
         if 'exername' not in args:
@@ -204,11 +175,7 @@ class StexercismMaintenanceListCommand(sublime_plugin.TextCommand):
         try:
             self.view.run_command(stexercism_maint_list)
         except subprocess.CalledProcessError as err:
-            raise RuntimeError(
-                "command '{}' returned with error (code {}): {}.".format(
-                    err.cmd,
-                    err.returncode,
-                    err.output.decode('UTF-8').strip()))
+            raise RuntimeError(errorMsg(err))
     def input(self, args):
         if 'stexercism_maint_list' not in args:
             return StexercismMaintListInputHandler()
@@ -216,59 +183,24 @@ class StexercismMaintenanceListCommand(sublime_plugin.TextCommand):
 class StexercismVersionCheckCommand(sublime_plugin.TextCommand):
     """Checks version of CLI"""
     def run(self, edit):
-        submit_cli = subprocess.check_output(
-            ["exercism",
-            "version"],
-            stderr=subprocess.STDOUT)
-        sublime.active_window().run_command(
-            "show_panel",
-            {"panel": "console", "toggle": True})
-        print(submit_cli.decode('UTF-8').strip())
+        cmdType(["exercism", "version"])
 
 class StexercismUpdateCommand(sublime_plugin.TextCommand):
     """Updates CLI"""
     def run(self, edit):
-        submit_cli = subprocess.check_output(
-            ["exercism",
-            "upgrade"],
-            stderr=subprocess.STDOUT)
-        sublime.active_window().run_command(
-            "show_panel",
-            {"panel": "console", "toggle": True})
-        print(submit_cli.decode('UTF-8').strip())
+        cmdType(["exercism", "upgrade"])
 
 class StexercismWorkspaceCommand(sublime_plugin.TextCommand):
     """Finds the directory to exercism and opens file on file browser of OS (if toggled)"""
     def run(self, edit):
         try:
-            submit_cli = subprocess.check_output(
-                ["exercism",
-                "workspace"],
-                stderr=subprocess.STDOUT)
-            sublime.active_window().run_command(
-                "show_panel",
-                {"panel": "console", "toggle": True})
-            print(submit_cli.decode('UTF-8').strip())
-            path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
-            
+            submit_cli = cmdType(["exercism", "workspace"], True)
             if sublime.load_settings(settings_filename).get("toggle_open_path_workspace"):
                 #Checks what OS will work
-                if platform == "win32":
-                    os.startfile(path)
-                elif platform == "darwin":
-                    subprocess.Popen([
-                        "open",
-                        path])
-                else:
-                    subprocess.Popen([
-                        "xdg-open",
-                        path])
+                path = submit_cli.decode('UTF-8').strip().split("\n")[-1]
+                checkOS(path)
         except subprocess.CalledProcessError as err:
-            raise RuntimeError(
-                "command '{}' returned with error (code {}): {}.".format(
-                    err.cmd,
-                    err.returncode,
-                    err.output.decode('UTF-8').strip()))
+            raise RuntimeError(errorMsg(err))
 
 #TOGGLES
 class StexercismTogglesListInputHandler(sublime_plugin.ListInputHandler):
@@ -281,11 +213,7 @@ class StexercismTogglesListCommand(sublime_plugin.TextCommand):
         try:
             self.view.run_command(stexercism_toggles_list)
         except subprocess.CalledProcessError as err:
-            raise RuntimeError(
-                "command '{}' returned with error (code {}): {}.".format(
-                    err.cmd,
-                    err.returncode,
-                    err.output.decode('UTF-8').strip()))
+            raise RuntimeError(errorMsg(err))
     def input(self, args):
         if 'toggle_command' not in args:
             return StexercismTogglesListInputHandler()
@@ -317,5 +245,4 @@ class StexercismToggleOpenSiteSubmitCommand(sublime_plugin.TextCommand):
 #TODO: Chunk out certain repeated code into diff methods e.g.:
 #Print out console command
 #Error code
-#TODO: Fix documentation
 #TODO: Add "Download-Multiple"
