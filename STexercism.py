@@ -52,7 +52,7 @@ def errorMsg(err):
     return "command '{}' returned with error (code {}): {}.".format(
         err.cmd,
         err.returncode,
-        err.output.decode('UTF-8').strip())
+        err.output.decode('latin-1').strip())
 
 #GENERAL USE COMMANDS
 class StexercismSubmitCurrentFileCommand(sublime_plugin.TextCommand):
