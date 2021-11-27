@@ -1,10 +1,10 @@
 [
     {"caption": "STexercism: Submit current exercise file", "command": "stexercism_submit_current_file"},
     {"caption": "STexercism: Open current exercise on the website", "command": "stexercism_open_current_exercise"},
-    {"caption": "STexercism: Test current exercise file (Python)", "command": "stexercism_test_current_file_python"},
+    {"caption": "STexercism: Test current Python exercise file", "command": "stexercism_test_current_file_python"},
     {"caption": "STexercism: Download an exercise file", "command": "stexercism_download_file", "args": {}},
 
-    {"caption": "STexercism: List of Maintenance Commands", "command": "stexercism_maintenance_list"},
+    {"caption": "STexercism: List of maintenance commands", "command": "stexercism_maintenance_list"},
 
-    {"caption": "STexercism: List of Toggles", "command": "stexercism_toggles_list"}
+    {"caption": "STexercism: List of toggles", "command": "stexercism_toggles_list"}
 ]
